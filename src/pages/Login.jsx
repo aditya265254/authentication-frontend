@@ -15,8 +15,11 @@ const Login = () => {
       localStorage.setItem("token", response.data.data.token)
       navigate('/dashboard')
     } catch (error) {
-      setError(error.response.data.message)
-    } 
+    setError({
+        message: error.response?.data?.message || "Something went wrong",
+        statusCode: error.response?.data?.statusCode || error.response?.status
+    })
+}
   }
 
   const hadndleGoogleLogin = () => {
@@ -24,14 +27,14 @@ const Login = () => {
   }
 
   return (
-    <div>
+    <div >
        <button type='button' onClick={hadndleGoogleLogin} >Sigin with google </button>
-      {error && <p>{error}</p>}
+     {error.message && <p>{error.statusCode} — {error.message}</p>}  
       <form onSubmit={handleSubmit}>
-        <label htmlFor="">userName or email</label>
-        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <label htmlFor="">password</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <label htmlFor="user">userName or email</label>
+        <input type="text" id='user' value={email} onChange={(e) => setEmail(e.target.value)} />
+        <label htmlFor="password">password</label>
+        <input type="password" id='password' value={password} onChange={(e) => setPassword(e.target.value)} />
         <button type='submit' >login</button>
       </form>
     </div>
