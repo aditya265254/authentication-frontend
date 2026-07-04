@@ -28,18 +28,63 @@ const Login = () => {
   }
 
   return (
-    <div >
-       <button type='button' onClick={hadndleGoogleLogin} >Sigin with google </button>
-     {error.message && <p>{error.statusCode} — {error.message}</p>}  
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="user">userName or email</label>
-        <input type="text" id='user' value={email} onChange={(e) => setEmail(e.target.value)} />
-        <label htmlFor="password">password</label>
-        <input type="password" id='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button type='submit' >login</button>
-      </form>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+            
+            <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+            
+            <button 
+                type='button' 
+                onClick={hadndleGoogleLogin}
+                className="w-full border border-gray-300 rounded-lg py-2 mb-4 flex items-center justify-center gap-2 hover:bg-gray-50"
+            >
+                Sign in with Google
+            </button>
+
+            <div className="text-center text-gray-400 mb-4">or</div>
+
+            {error.message && (
+                <p className="text-red-500 text-sm mb-3">
+                    {error.statusCode} — {error.message}
+                </p>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <input 
+                    type="text" 
+                    placeholder="Email"
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <input 
+                    type="password"
+                    placeholder="Password"
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <button 
+                    type='submit'
+                    className="bg-blue-500 text-white rounded-lg py-2 hover:bg-blue-600"
+                >
+                    Login
+                </button>
+            </form>
+
+            <p className="text-center text-sm mt-4">
+                Account nahi h? 
+                <span 
+                    onClick={() => navigate('/signup')}
+                    className="text-blue-500 cursor-pointer ml-1"
+                >
+                    Sign up
+                </span>
+            </p>
+
+        </div>
     </div>
-  )
+)
 }
 
 export default Login
