@@ -10,16 +10,26 @@ const Dashboard = () => {
     localStorage.removeItem("user")
     navigate('/')
   }
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      navigate("/");
+useEffect(() => {
+  
+    const urlParams = new URLSearchParams(window.location.search)
+    const urlToken = urlParams.get('token')
+    const urlUser = urlParams.get('user')
+    
+    if (urlToken) {
+        localStorage.setItem("token", urlToken)
+        localStorage.setItem("user", urlUser)
     }
-
-    const user = JSON.parse(localStorage.getItem("user"));
-    setUser(user);
-  }, []);
+    
+   
+    const token = localStorage.getItem("token")
+    if (!token) {
+        navigate('/')
+    }
+    
+    const user = JSON.parse(localStorage.getItem("user"))
+    setUser(user)
+}, [])
 
   return (
     <div>
