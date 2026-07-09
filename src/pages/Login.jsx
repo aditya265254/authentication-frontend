@@ -13,6 +13,7 @@ const Login = () => {
     try {
       const response = await  axios.post("https://authentication-bakend-rclb.onrender.com/api/auth/login", {email, password})
       localStorage.setItem("token", response.data.data.token)
+      localStorage.setItem("role", response.data.data.user.role)
       localStorage.setItem("user", JSON.stringify(response.data.data.user))
       navigate('/dashboard')
     } catch (error) {
