@@ -15,7 +15,11 @@ const Login = () => {
       localStorage.setItem("token", response.data.data.token)
       localStorage.setItem("role", response.data.data.user.role)
       localStorage.setItem("user", JSON.stringify(response.data.data.user))
-      navigate('/dashboard')
+      if (role === "admin") {
+        navigate("/admin/dashboard")
+      } else {
+        navigate("/dashboard")
+      }
     } catch (error) {
     setError({
         message: error.response?.data?.message || "Something went wrong",
