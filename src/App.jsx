@@ -26,9 +26,9 @@ const App = () => {
       <Route 
           path='/admin/dashboard' 
           element={
-            <ProtectedAdminRoute>
+            // <ProtectedAdminRoute>
               <AdminDashbord />
-            </ProtectedAdminRoute>
+            // </ProtectedAdminRoute>
           } 
         />
     </Routes>

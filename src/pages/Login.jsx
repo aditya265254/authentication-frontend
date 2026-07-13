@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from "axios"
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -11,11 +13,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await  axios.post("https://authentication-bakend-rclb.onrender.com/api/auth/login", {email, password})
+      const response = await  axios.post(`${backendUrl}/api/auth/login`, {email, password})
       localStorage.setItem("token", response.data.data.token)
+
       localStorage.setItem("role", response.data.data.user.role)
+
       localStorage.setItem("user", JSON.stringify(response.data.data.user))
-      if (role === "admin") {
+      if (response.data.data.user.role === "admin") {
         navigate("/admin/dashboard")
       } else {
         navigate("/dashboard")
@@ -29,7 +33,7 @@ const Login = () => {
   }
 
   const hadndleGoogleLogin = () => {
-    window.location.href  = 'https://authentication-bakend-rclb.onrender.com/api/auth/google'
+    window.location.href  = `${backendUrl}/api/auth/google`
   }
 
   return (

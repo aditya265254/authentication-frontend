@@ -1,25 +1,39 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
+import {  useNavigate } from 'react-router-dom';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const AdminDashbord = () => {
     const [users, setUsers] = useState([])
     const [error, setError] = useState()
+  const navigate = useNavigate();
+
 
     const fetchUsers = async () => {
         try {
            const token = localStorage.getItem("token")
-           const response = await axios.get("https://authentication-bakend-rclb.onrender.com/api/auth/admin/dashbord", { headers: { Authorization: `Bearer ${token} `} })
+           const response = await axios.get(`${backendUrl}/api/auth/admin/dashbord`, { headers: { Authorization: `Bearer ${token} `} })
            setUsers(response.data.data)
         } catch (error) {
         setError(error.response?.data?.message || "something went wrong")
         }   
     }
     useEffect(() => {
-        fetchUsers()
+
+           fetchUsers()
     }, [])
+
+      const handleLogout = () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    navigate('/')
+  }
 return (
     <div className="p-6 max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-red-600 mb-4">Admin Dashboard</h1>
+        <button className='w-14 h-10 bg-red-500 rounded-4xl my-2.5 text-white cursor-pointer' onClick={handleLogout}>Logout</button>
+
+
         
         {error && <p className="text-red-500 mb-4">{error}</p>}
         

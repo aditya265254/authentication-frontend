@@ -1,6 +1,7 @@
 import axios from 'axios'
 import  {  useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Signup = () => {
   const [email, setEmail] = useState('')
@@ -13,7 +14,7 @@ const Signup = () => {
   const handleSignUp = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post("https://authentication-bakend-rclb.onrender.com/api/auth/signup", {fullName, email, password})
+      const response = await axios.post(`${backendUrl}/api/auth/signup`, {fullName, email, password})
       navigate('/')
         } catch (error) {
     setError({
