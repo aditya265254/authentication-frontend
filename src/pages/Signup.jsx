@@ -1,5 +1,5 @@
 import axios from 'axios'
-import  {  useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { toast } from 'react-toastify';
@@ -10,87 +10,98 @@ const Signup = () => {
   const [password, setPassword] = useState('')
   const [error] = useState('')
   const navigate = useNavigate()
-
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async (e) => {
     e.preventDefault()
- try {
-    
-    const response = await axios.post(`${backendUrl}/api/auth/signup`, { fullName, email, password });
+    if (loading) return; // 🔄 Double click hone se bachane ke liye
 
-    if (response.data.success) {
-       
+    setLoading(true); // Loading chalu
+    try {
+      const response = await axios.post(`${backendUrl}/api/auth/signup`, { fullName, email, password });
+
+      if (response.data.success) {
         toast.success(response.data.message || "Registration successful! Please check your email.");
-
         setTimeout(() => {
-            navigate('/');
+          navigate('/');
         }, 3000);
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Registration failed. Try again!";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false); // ✅ Chahe error aaye ya success, loader yahan aakar ruk jayega
     }
-} catch (error) {
- 
-    const errorMessage = error.response?.data?.message || "Registration failed. Try again!";
-    toast.error(errorMessage);
-}
-}
+  }
 
-
-return (
+  return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-            
-            <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        
+        <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
 
-            {error.message && (
-                <p className="text-red-500 text-sm mb-3">
-                    {error.statusCode} — {error.message}
-                </p>
+        {error.message && (
+          <p className="text-red-500 text-sm mb-3">
+            {error.statusCode} — {error.message}
+          </p>
+        )}
+
+        <form onSubmit={handleSignUp} className="flex flex-col gap-4">
+          <input 
+            type="text"
+            placeholder="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input 
+            type="email"
+            placeholder="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input 
+            type="password"
+            placeholder="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          
+          {/* Spinner layout ke saath updated button */}
+          <button 
+            type='submit'
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 bg-blue-500 text-white rounded-lg py-2 hover:bg-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all"
+          >
+            {loading ? (
+              <>
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Registering...</span>
+              </>
+            ) : (
+              "Sign Up"
             )}
+          </button>
+        </form>
 
-            <form onSubmit={handleSignUp} className="flex flex-col gap-4">
-                <input 
-                    type="text"
-                    placeholder="Full Name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input 
-                    type="email"
-                    placeholder="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input 
-                    type="password"
-                    placeholder="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                
-                
-                <button 
-                    type='submit'
-                    className="bg-blue-500 text-white rounded-lg py-2 hover:bg-blue-600"
-                >
-                    Sign Up
-                </button>
-            </form>
+        <p className="text-center text-sm mt-4">
+          Already have account?
+          <span 
+            onClick={() => navigate('/')}
+            className="text-blue-500 cursor-pointer ml-1"
+          >
+            Login
+          </span>
+        </p>
 
-            <p className="text-center text-sm mt-4">
-                Already have account?
-                <span 
-                    onClick={() => navigate('/')}
-                    className="text-blue-500 cursor-pointer ml-1"
-                >
-                    Login
-                </span>
-            </p>
-
-        </div>
+      </div>
     </div>
-)
+  )
 }
 
-export default Signup
+export default Signup;

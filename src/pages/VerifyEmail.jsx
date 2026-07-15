@@ -1,40 +1,49 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react"; // ← useRef joda double render rokne ke liye
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify"; 
 
 const VerifyEmail = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [status, setStatus] = useState("Verifying your email, please wait...");
     const [error, setError] = useState(null);
+    
+    
+    const hasCalledApi = useRef(false);
 
     useEffect(() => {
         const verifyUserEmail = async () => {
-            // 1. URL se token nikalo (?token=XYZ)
             const token = searchParams.get("token");
 
             if (!token) {
-                setError("Invalid link. Token is missing.");
+                setError("Invalid link. The verification token is missing.");
                 setStatus("");
                 return;
             }
 
+            if (hasCalledApi.current) return;
+            hasCalledApi.current = true; 
+
             try {
               
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
                 const response = await axios.get(`${backendUrl}/api/auth/verify-email?token=${token}`);
 
                 if (response.data.success) {
-                    setStatus("Email Verified Successfully! Redirecting to login...");
+                    setStatus("Email verified successfully! Redirecting to login...");
+                    toast.success("Email verified successfully!"); // Green toast popup
                     
-               
                     setTimeout(() => {
                         navigate("/");
                     }, 3000);
                 }
             } catch (err) {
                 console.error(err);
-                setError(err.response?.data?.message || "Verification failed. Link might be expired.");
+              
+                const serverMessage = err.response?.data?.message || "Verification failed. The link might be expired.";
+                setError(serverMessage);
+                toast.error(serverMessage); 
                 setStatus("");
             }
         };
@@ -54,7 +63,7 @@ const VerifyEmail = () => {
                         <p className="text-red-500 font-medium mb-4">{error}</p>
                         <button 
                             onClick={() => navigate("/")} 
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
                         >
                             Go to Login
                         </button>
