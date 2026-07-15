@@ -2,27 +2,37 @@ import axios from 'axios'
 import  {  useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { toast } from 'react-toastify';
 
 const Signup = () => {
   const [email, setEmail] = useState('')
   const [fullName, setFullName] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [error] = useState('')
   const navigate = useNavigate()
 
 
   const handleSignUp = async (e) => {
     e.preventDefault()
-    try {
-      const response = await axios.post(`${backendUrl}/api/auth/signup`, {fullName, email, password})
-      navigate('/')
-        } catch (error) {
-    setError({
-        message: error.response?.data?.message || "Something went wrong",
-        statusCode: error.response?.data?.statusCode || error.response?.status
-    })
+ try {
+    
+    const response = await axios.post(`${backendUrl}/api/auth/signup`, { fullName, email, password });
+
+    if (response.data.success) {
+       
+        toast.success(response.data.message || "Registration successful! Please check your email.");
+
+        setTimeout(() => {
+            navigate('/');
+        }, 3000);
+    }
+} catch (error) {
+ 
+    const errorMessage = error.response?.data?.message || "Registration failed. Try again!";
+    toast.error(errorMessage);
 }
-  }
+}
+
 
 return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">

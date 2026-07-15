@@ -1,28 +1,36 @@
 import axios from 'axios'
 import  { useEffect, useState } from 'react'
 import {  useNavigate } from 'react-router-dom';
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
 const AdminDashbord = () => {
     const [users, setUsers] = useState([])
     const [error, setError] = useState()
   const navigate = useNavigate();
 
-
-    const fetchUsers = async () => {
-        try {
-           const token = localStorage.getItem("token")
-           const response = await axios.get(`${backendUrl}/api/auth/admin/dashbord`, { headers: { Authorization: `Bearer ${token} `} })
-           setUsers(response.data.data)
-        } catch (error) {
-        setError(error.response?.data?.message || "something went wrong")
-        }   
+useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"))
+    if (!user || user?.role !== "admin") {
+        navigate('/dashboard')
+        return
     }
-    useEffect(() => {
-
-           fetchUsers()
-    }, [])
-
+    
+    // fetchUsers ko async IIFE mein wrap karo
+    (async () => {
+        try {
+            const token = localStorage.getItem("token")
+            const response = await axios.get(
+                `${backendUrl}/api/auth/admin/dashbord`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            setUsers(response.data.data)
+        } catch (error) {
+            setError(error.response?.data?.message || "something went wrong")
+        }
+    })()
+}, [navigate])
       const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
